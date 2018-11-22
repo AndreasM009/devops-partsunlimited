@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
@@ -14,6 +15,7 @@ using PartsUnlimited.Search;
 using PartsUnlimited.Security;
 using PartsUnlimited.Telemetry;
 using PartsUnlimited.WebsiteConfiguration;
+using PartsUnlimitedWebsite.Telemetry;
 using System;
 
 namespace PartsUnlimited
@@ -83,7 +85,8 @@ namespace PartsUnlimited
                 return new ConfigurationApplicationInsightsSettings(Configuration.GetSection(ConfigurationPath.Combine("Keys", "ApplicationInsights")));
             });
 
-            services.AddApplicationInsightsTelemetry(Configuration);
+            services.AddSingleton<ITelemetryInitializer, TelemetryInitializer>();
+            services.AddApplicationInsightsTelemetry();
 
             // Associate IPartsUnlimitedContext and PartsUnlimitedContext with context
             services.AddTransient<IPartsUnlimitedContext>(x => new PartsUnlimitedContext(sqlConnectionString));
